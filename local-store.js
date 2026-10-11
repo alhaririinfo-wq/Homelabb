@@ -5,11 +5,20 @@
   if (!window.HL_LOCAL) return;
   const TRASH = '.trash', VERS = '.trash/.versions';
   let dbp;
-  const db = () => dbp || (dbp = new Promise((res, rej) => {
+  // بديل بالذاكرة إذا المتصفح قافل IndexedDB (Brave/Lockdown Mode على آيفون، تبويب خاص)
+  const memDB = () => {
+    const m = new Map();
+    const rq = v => { const r = {}; setTimeout(() => { r.result = v; r.onsuccess && r.onsuccess(); }); return r; };
+    const st = { get: k => rq(m.get(k)), getAll: () => rq([...m.values()]), put: v => { m.set(v.path, v); return rq(); }, delete: k => { m.delete(k); return rq(); },
+      index: () => ({ getAll: p => rq([...m.values()].filter(v => v.parent === p)) }) };
+    return { transaction() { const t = { objectStore: () => st }; setTimeout(() => setTimeout(() => t.oncomplete && t.oncomplete(), 5)); return t; } };
+  };
+  const warnMem = () => setTimeout(() => toast('⚠ متصفحك قافل التخزين، فالملفات رح تنمسح لما تسكّر الصفحة. افتح الرابط بـ <b>Safari</b> (مو تبويب خاص)، أو من إعدادات Brave وقّف حظر التخزين لهالموقع.', 'err', 15000), 800);
+  const db = () => dbp || (dbp = !window.indexedDB ? (warnMem(), Promise.resolve(memDB())) : new Promise((res, rej) => {
     const r = indexedDB.open('homelab-files', 1);
     r.onupgradeneeded = () => { const s = r.result.createObjectStore('files', { keyPath: 'path' }); s.createIndex('parent', 'parent'); };
     r.onsuccess = () => res(r.result);
-    r.onerror = () => rej(new Error('التخزين غير متاح بهذا المتصفح (وضع التصفح الخفي؟)'));
+    r.onerror = () => { warnMem(); res(memDB()); };
   }));
   const tx = async (mode, fn) => {
     const d = await db();
