@@ -1,6 +1,6 @@
 /* HomeLab — يعمل بدون إنترنت */
-const CACHE = 'homelab-e5f928da06';
-const FILES = ["./", "icon-192.png", "icon-512.png", "index.html", "js/boot.js", "js/core.js", "js/docx-writer.js", "js/editors.js", "js/files.js", "js/home.js", "js/local-store.js", "js/pdf-editor.js", "js/phone.js", "js/prayer.js", "js/radio.js", "js/settings.js", "js/tools-islamic.js", "js/tools-media.js", "js/tools.js", "manifest.json", "style.css", "vendor/adhan.umd.min.js", "vendor/jsqr.js", "vendor/jszip.min.js", "vendor/mammoth.browser.min.js", "vendor/pdf-lib.min.js", "vendor/pdf.min.js", "vendor/pdf.worker.min.js", "vendor/qrcode.js", "vendor/xlsx.full.min.js"];
+const CACHE = 'homelab-46d89df110';
+const FILES = ["./", "adhan.umd.min.js", "boot.js", "core.js", "docx-writer.js", "editors.js", "files.js", "home.js", "icon-192.png", "icon-512.png", "index.html", "jsqr.js", "jszip.min.js", "local-store.js", "mammoth.browser.min.js", "manifest.json", "pdf-editor.js", "pdf-lib.min.js", "pdf.min.js", "pdf.worker.min.js", "phone.js", "prayer.js", "qrcode.js", "radio.js", "settings.js", "style.css", "tools-islamic.js", "tools-media.js", "tools.js", "xlsx.full.min.js"];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

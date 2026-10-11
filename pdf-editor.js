@@ -1,7 +1,7 @@
 /* pdf-editor.js — محرر PDF: عرض، إضافة نص (يدعم العربي)، توقيع، صور، تظليل، تبييض،
    تدوير/حذف/ترتيب/إدراج صفحات، دمج، استخراج صفحات، تصدير صفحة كصورة */
 'use strict';
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdf.worker.min.js';
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
 
 const PdfEd = {
   srcs: [],       // [{bytes:Uint8Array, js:PDFDocumentProxy}]
