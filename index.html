@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14111f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>HomeLab</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%237c5cff'/><path d='M14 34 32 18l18 16v14H14z' fill='white'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v10H3z"/></svg></div>
+      <div><b>HomeLab</b><small>محلي · خاص فيك</small></div>
+    </div>
+    <nav>
+      <a href="#/home" data-view="home"><i>🏠</i><span>الرئيسية</span></a>
+      <a href="#/files" data-view="files"><i>📁</i><span>الملفات</span></a>
+      <a href="#/radio" data-view="radio"><i>📻</i><span>الراديو</span></a>
+      <a href="#/tools" data-view="tools"><i>🧰</i><span>الأدوات</span></a>
+      <a href="#/prayer" data-view="prayer"><i>🕌</i><span>الصلاة</span></a>
+      <a href="#/settings" data-view="settings"><i>⚙</i><span>الإعدادات</span></a>
+    </nav>
+    <div class="mini-player" id="miniPlayer" hidden>
+      <img id="mpLogo" alt="">
+      <div class="mp-text"><b id="mpName">—</b><small id="mpState">متوقف</small></div>
+      <button class="icon-btn" id="mpToggle" title="تشغيل/إيقاف">▶</button>
+    </div>
+    <div class="side-foot">
+      <div class="next-prayer-mini" id="sideNext"></div>
+      <small id="sideClock"></small>
+    </div>
+  </aside>
+
+  <main id="main">
+    <!-- الرئيسية -->
+    <section class="view" id="view-home">
+      <header class="hero">
+        <div>
+          <h1 id="greet">أهلاً</h1>
+          <p id="todayDates"></p>
+        </div>
+        <div class="big-clock" id="bigClock">--:--</div>
+      </header>
+      <div class="grid cards">
+        <a class="card stat accent" href="#/prayer">
+          <small>الصلاة القادمة</small>
+          <b id="hNextName">—</b>
+          <span id="hNextTime"></span>
+          <div class="countdown" id="hCountdown"></div>
+        </a>
+        <a class="card stat" href="#/files">
+          <small>الملفات</small>
+          <b id="hFiles">—</b>
+          <span id="hFilesSize"></span>
+          <div class="bar"><div id="hDiskBar"></div></div>
+          <span class="muted" id="hDisk"></span>
+        </a>
+        <a class="card stat wx-card" href="#/tool/weather" id="hWx">
+          <small>الطقس</small>
+          <b id="hWxT">—</b>
+          <span id="hWxD"></span>
+        </a>
+        <a class="card stat" href="#/radio">
+          <small>الراديو</small>
+          <b id="hRadio">ما في شي شغال</b>
+          <span id="hRadioFav"></span>
+        </a>
+      </div>
+      <div class="quick" id="hQuick"></div>
+      <div class="grid two">
+        <div class="card">
+          <div class="card-head"><h3>صلوات اليوم</h3><span class="muted" id="hLoc"></span></div>
+          <div class="prayer-strip" id="hPrayers"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>آخر الملفات المعدّلة</h3></div>
+          <ul class="recent" id="hRecent"><li class="muted">لا يوجد بعد</li></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- الملفات -->
+    <section class="view" id="view-files">
+      <div class="toolbar">
+        <div class="crumbs" id="crumbs"></div>
+        <div class="spacer"></div>
+        <input type="search" id="fSearch" placeholder="بحث في كل الملفات…">
+        <div class="btn-group">
+          <button class="btn" id="fUpload">⬆ رفع ملفات</button>
+          <button class="btn" id="fUploadDir" title="رفع مجلد كامل">📂</button>
+          <button class="btn" id="fNewDir">+ مجلد</button>
+          <div class="dropdown">
+            <button class="btn">+ ملف جديد ▾</button>
+            <div class="menu">
+              <button data-new="txt">ملف نصي .txt</button>
+              <button data-new="md">ملاحظات .md</button>
+              <button data-new="docx">مستند Word .docx</button>
+              <button data-new="xlsx">جدول Excel .xlsx</button>
+              <button data-new="pdf">PDF فارغ</button>
+            </div>
+          </div>
+          <button class="btn ghost" id="fViewMode" title="عرض شبكي/قائمة">▦</button>
+          <button class="btn ghost" id="fTrash" title="سلة المحذوفات">🗑</button>
+        </div>
+      </div>
+      <div class="selbar" id="selbar" hidden>
+        <b id="selCount"></b>
+        <button class="btn sm" data-act="download">تنزيل</button>
+        <button class="btn sm" data-act="copy">نسخ إلى…</button>
+        <button class="btn sm" data-act="move">نقل إلى…</button>
+        <button class="btn sm" data-act="mergepdf" hidden>دمج PDF</button>
+        <button class="btn sm" data-act="img2pdf" hidden>صور ← PDF</button>
+        <button class="btn sm danger" data-act="delete">حذف</button>
+        <button class="btn sm ghost" data-act="clear">إلغاء</button>
+      </div>
+      <div class="dropzone" id="dropzone">
+        <div class="file-list list" id="fileList"></div>
+        <div class="drop-hint">أفلت الملفات هنا للرفع</div>
+      </div>
+      <input type="file" id="fileInput" multiple hidden>
+      <input type="file" id="dirInput" webkitdirectory multiple hidden>
+    </section>
+
+    <!-- المحرر -->
+    <section class="view" id="view-editor">
+      <div class="toolbar editor-bar">
+        <button class="btn ghost" id="edBack">→ رجوع</button>
+        <div class="ed-title"><b id="edName"></b><small id="edState"></small></div>
+        <div class="spacer"></div>
+        <div id="edTools" class="btn-group"></div>
+        <button class="btn" id="edSaveAs">حفظ كنسخة</button>
+        <button class="btn primary" id="edSave">💾 حفظ</button>
+      </div>
+      <div class="editor-body" id="edBody"></div>
+    </section>
+
+    <!-- الراديو -->
+    <section class="view" id="view-radio">
+      <div class="radio-now card" id="radioNow">
+        <img id="rnLogo" alt="">
+        <div class="rn-info">
+          <small id="rnState">اختر محطة</small>
+          <h2 id="rnName">الراديو العالمي</h2>
+          <span class="muted" id="rnMeta">آلاف المحطات من كل العالم</span>
+        </div>
+        <div class="rn-ctrl">
+          <button class="round" id="rnToggle" disabled>▶</button>
+          <button class="icon-btn" id="rnFav" title="مفضلة" disabled>☆</button>
+          <input type="range" id="rnVol" min="0" max="1" step="0.01" value="0.8" title="الصوت">
+        </div>
+        <div class="eq" id="rnEq"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="toolbar wrap">
+        <input type="search" id="rSearch" placeholder="ابحث باسم محطة…">
+        <select id="rCountry"><option value="">كل الدول</option></select>
+        <select id="rSort">
+          <option value="clickcount">الأكثر استماعاً</option>
+          <option value="votes">الأعلى تقييماً</option>
+          <option value="name">بالاسم</option>
+        </select>
+        <button class="btn primary" id="rGo">بحث</button>
+      </div>
+      <div class="chips" id="rChips">
+        <button class="chip on" data-tab="fav">⭐ المفضلة</button>
+        <button class="chip" data-tab="recent">🕘 الأخيرة</button>
+        <button class="chip" data-tag="quran">قرآن كريم</button>
+        <button class="chip" data-tag="arabic">عربي</button>
+        <button class="chip" data-country="DE">ألمانيا</button>
+        <button class="chip" data-country="SY">سوريا</button>
+        <button class="chip" data-country="AE">الإمارات</button>
+        <button class="chip" data-country="SA">السعودية</button>
+        <button class="chip" data-country="EG">مصر</button>
+        <button class="chip" data-tag="news">أخبار</button>
+        <button class="chip" data-tag="pop">بوب</button>
+        <button class="chip" data-tag="jazz">جاز</button>
+        <button class="chip" data-tag="classical">كلاسيك</button>
+        <button class="chip" data-tag="lofi">Lo-Fi</button>
+      </div>
+      <div class="stations" id="stations"></div>
+      <audio id="audio" preload="none"></audio>
+    </section>
+
+    <!-- الصلاة -->
+    <section class="view" id="view-prayer">
+      <div class="grid two prayer-top">
+        <div class="card next-card">
+          <small>الصلاة القادمة</small>
+          <h2 id="pNextName">—</h2>
+          <div class="ring-wrap">
+            <svg viewBox="0 0 120 120" class="ring"><circle cx="60" cy="60" r="52"/><circle cx="60" cy="60" r="52" id="pRing"/></svg>
+            <div class="ring-text"><b id="pCountdown">--:--:--</b><small id="pNextAt"></small></div>
+          </div>
+          <div class="muted" id="pDates"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>📍 <span id="pLocName">الموقع</span></h3><span class="muted" id="pCoords"></span></div>
+          <ul class="prayer-list" id="pList"></ul>
+          <div class="qibla-row">
+            <div class="compass"><div class="needle" id="qNeedle"></div><span>N</span></div>
+            <div><b>اتجاه القبلة</b><div class="muted" id="qDeg"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>⚙ الإعدادات</h3></div>
+        <div class="form-grid">
+          <label>المدينة / العنوان
+            <div class="row"><input id="pCity" placeholder="مثال: Hameln أو دمشق"><button class="btn" id="pCityGo">بحث</button></div>
+            <div class="city-results" id="pCityRes"></div>
+          </label>
+          <label>&nbsp;<button class="btn" id="pGeo">📡 استخدم موقعي الحالي</button></label>
+          <label>خط العرض <input id="pLat" type="number" step="0.0001"></label>
+          <label>خط الطول <input id="pLng" type="number" step="0.0001"></label>
+          <label>طريقة الحساب
+            <select id="pMethod">
+              <option value="MuslimWorldLeague">رابطة العالم الإسلامي</option>
+              <option value="Turkey">ديانت تركيا (شائع بأوروبا)</option>
+              <option value="Egyptian">الهيئة المصرية</option>
+              <option value="UmmAlQura">أم القرى (مكة)</option>
+              <option value="Dubai">دبي</option>
+              <option value="Kuwait">الكويت</option>
+              <option value="Qatar">قطر</option>
+              <option value="Karachi">كراتشي</option>
+              <option value="NorthAmerica">أمريكا الشمالية ISNA</option>
+              <option value="MoonsightingCommittee">لجنة رؤية الهلال</option>
+              <option value="Singapore">سنغافورة</option>
+              <option value="Tehran">طهران</option>
+            </select>
+          </label>
+          <label>مذهب العصر
+            <select id="pMadhab"><option value="Shafi">الجمهور (شافعي/مالكي/حنبلي)</option><option value="Hanafi">حنفي</option></select>
+          </label>
+          <label>خطوط العرض العالية
+            <select id="pHigh">
+              <option value="auto">تلقائي (مستحسن لأوروبا)</option>
+              <option value="MiddleOfTheNight">منتصف الليل</option>
+              <option value="SeventhOfTheNight">سُبع الليل</option>
+              <option value="TwilightAngle">زاوية الشفق</option>
+            </select>
+          </label>
+          <label>المنطقة الزمنية
+            <select id="pTz"></select>
+          </label>
+          <label class="check"><input type="checkbox" id="pNotify"> تنبيه عند دخول الوقت</label>
+          <label class="check"><input type="checkbox" id="pSound" checked> صوت التنبيه</label>
+          <label>صوت الأذان (اختياري — ملف من مجلد ملفاتك)
+            <div class="row"><input id="pAdhan" placeholder="مثال: audio/adhan.mp3"><button class="btn" id="pAdhanTest">▶ تجربة</button></div>
+          </label>
+          <label>تعديل يدوي بالدقائق (فجر، شروق، ظهر، عصر، مغرب، عشاء)
+            <input id="pAdj" placeholder="0,0,0,0,0,0">
+          </label>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>📅 جدول الشهر</h3>
+          <div class="btn-group"><button class="btn sm" id="pPrevM">→</button><b id="pMonthLbl"></b><button class="btn sm" id="pNextM">←</button></div>
+        </div>
+        <div class="table-wrap"><table class="month" id="pMonth"></table></div>
+      </div>
+    </section>
+    <!-- الأدوات -->
+    <section class="view" id="view-tools">
+      <div class="toolbar"><h2 style="margin:0">🧰 الأدوات</h2><span class="spacer"></span><input type="search" id="toolSearch" placeholder="ابحث عن أداة…"></div>
+      <div id="toolsGrid"></div>
+    </section>
+    <section class="view" id="view-tool">
+      <div class="toolbar"><button class="btn ghost" id="toolBack">→ الأدوات</button><h2 id="toolTitle" style="margin:0;font-size:20px"></h2></div>
+      <div id="toolBody"></div>
+    </section>
+    <!-- الإعدادات -->
+    <section class="view" id="view-settings">
+      <div class="toolbar"><h2 style="margin:0">⚙ الإعدادات</h2></div>
+      <div id="settingsBody" class="stack"></div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="modal" hidden><div class="modal-box" id="modalBox"></div></div>
+<div class="toasts" id="toasts"></div>
+<div class="ctx" id="ctx" hidden></div>
+
+<script>window.HL_LOCAL = true;</script>
+<script src="vendor/pdf.min.js"></script>
+<script src="vendor/pdf-lib.min.js"></script>
+<script src="vendor/xlsx.full.min.js"></script>
+<script src="vendor/mammoth.browser.min.js"></script>
+<script src="vendor/jszip.min.js"></script>
+<script src="vendor/adhan.umd.min.js"></script>
+<script src="vendor/qrcode.js"></script>
+<script src="vendor/jsqr.js"></script>
+<script src="js/core.js"></script>
+<script src="js/local-store.js"></script>
+<script src="js/files.js"></script>
+<script src="js/docx-writer.js"></script>
+<script src="js/editors.js"></script>
+<script src="js/pdf-editor.js"></script>
+<script src="js/radio.js"></script>
+<script src="js/prayer.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/tools-islamic.js"></script>
+<script src="js/tools-media.js"></script>
+<script src="js/home.js"></script>
+<script src="js/phone.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>
